@@ -27,27 +27,27 @@ func (u *Utf8Command) SetFlags(f *flag.FlagSet) {
 }
 
 const (
-	One = 0
-	Two = 1
-	Three = 2
-	Four = 3
-	Cont = 4
-	Ignore = -1
+	One     = 0
+	Two     = 1
+	Three   = 2
+	Four    = 3
+	Cont    = 4
+	Ignore  = -1
 	Invalid = -2
 )
 
 func classify(b byte) int {
 	if b == 0 {
 		return Ignore
-	} else if b >> 7 == 0 {
+	} else if b>>7 == 0 {
 		return One
-	} else if b >> 5 == 6 {
+	} else if b>>5 == 6 {
 		return Two
-	} else if b >> 4 == 14 {
+	} else if b>>4 == 14 {
 		return Three
-	} else if b >> 3 == 30 {
+	} else if b>>3 == 30 {
 		return Four
-	} else if b >> 6 == 2 {
+	} else if b>>6 == 2 {
 		return Cont
 	}
 	return Invalid
@@ -63,17 +63,17 @@ func decode(encoded []byte) (character rune) {
 	if class == One {
 		character = rune(encoded[0])
 	} else if class == Two {
-		character = rune(encoded[0] & 31) << 6 |
-					rune(encoded[3] & 63)
+		character = rune(encoded[0]&31)<<6 |
+			rune(encoded[3]&63)
 	} else if class == Three {
-		character = rune(encoded[0] & 15) << 12 |
-					rune(encoded[2] & 63) << 6 |
-					rune(encoded[3] & 63)
+		character = rune(encoded[0]&15)<<12 |
+			rune(encoded[2]&63)<<6 |
+			rune(encoded[3]&63)
 	} else if class == Four {
-		character = rune(encoded[0] & 7) << 18 |
-					rune(encoded[1] & 63) << 12 |
-					rune(encoded[2] & 63) << 6 |
-					rune(encoded[3] & 63)
+		character = rune(encoded[0]&7)<<18 |
+			rune(encoded[1]&63)<<12 |
+			rune(encoded[2]&63)<<6 |
+			rune(encoded[3]&63)
 	}
 	return character
 }
@@ -106,7 +106,6 @@ func parse(path string) {
 		}
 		data = data[:n]
 
-		// Doug's Code
 		var encoded []byte
 		var class int
 		for i := 0; i < len(data); i++ {
